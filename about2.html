@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Jewel Rana - Fixed 3D Card (Deep Down Hover)</title>
+<title>Jewel Rana - Fixed 3D Card (Bird Fixed)</title>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
@@ -19,21 +19,21 @@
     overflow: hidden;
   }
 
+  /* ৩ডি কন্টেইনার */
   .card-container {
     perspective: 1500px;
     cursor: pointer;
   }
 
-  /* কার্ডের সাধারণ অবস্থা */
+  /* CARD WRAPPER */
   .card-wrapper {
     position: relative;
     width: 300px;
     border-radius: 20px;
     padding: 2px;
+    /* শুরুতে হিডেন থাকে বর্ডার অ্যানিমেশনের জন্য, কিন্তু active স্টেটে visible হওয়া জরুরি */
     overflow: hidden; 
     transform-style: preserve-3d;
-    /* শুরুতে কার্ডটি একটু নিচে থাকবে */
-    transform: translateY(20px); 
     transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 
@@ -47,6 +47,7 @@
     animation: rotateCard 4s linear infinite;
   }
 
+  /* কার্ডের ব্যাকগ্রাউন্ড মাস্ক */
   .card-wrapper::after {
     content: "";
     position: absolute;
@@ -56,10 +57,10 @@
     z-index: 1;
   }
 
-  /* ক্লিকের পর কার্ডটি অনেক বেশি নিচে (Down) নামবে */
+  /* ক্লিকের পর সেটিংস পরিবর্তন */
   .active .card-wrapper {
-    /* translateY(120px) কার্ডটিকে অনেক নিচে নামিয়ে দেবে */
-    transform: translateY(120px) rotateX(25deg);
+    transform: rotateX(20deg);
+    /* এটি নিশ্চিত করে যে পাখি কার্ডের সীমানা ছাড়িয়ে যেতে পারবে */
     overflow: visible; 
   }
 
@@ -67,6 +68,7 @@
     display: none;
   }
 
+  /* মেইন কার্ড বডি */
   .card {
     position: relative;
     background: #0b132b;
@@ -86,13 +88,15 @@
     margin-bottom: 30px;
     transform-style: preserve-3d;
     transition: 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+    /* নিশ্চিত করা যে প্যারেন্ট কন্টেইনারের overflow এর কারণে কিছু কেটে না যায় */
     overflow: visible;
   }
 
-  /* স্পাইডারম্যান পপ-আউট */
+  /* ছবি ও পাখির পপ-আউট এফেক্ট (পজিশন অ্যাডজাস্ট করা হয়েছে) */
   .active .img-box {
-    /* translateZ বাড়ানো হয়েছে যাতে সামনে বেশি আসে */
-    transform: translateZ(120px) translateY(-50px) scale(1.4);
+    /* translateZ এবং scale এর কারণে পাখি কেটে যেতে পারে, 
+       তাই ডানা কাটার সমস্যা কমাতে scale একটু কমানো যেতে পারে (যেমন ১.৩) */
+    transform: translateZ(100px) translateY(-30px) scale(1.3);
   }
 
   .img-box img {
@@ -102,32 +106,41 @@
     transition: opacity 0.5s ease, transform 0.5s ease;
   }
 
+  /* প্রোফাইল ফটো - গোলাকার এবং object-fit: cover */
   .img-box .profile-photo { 
     z-index: 5; 
     border-radius: 50%;
     object-fit: cover;
   }
   
+  /* পাখির ফটো - ডানা কাটার সমস্যা কমাতে modifications */
   .img-box .bird-photo { 
     z-index: 4; 
     opacity: 0; 
+    /* contain নিশ্চিত করে যে ছবিটি কন্টেইনারের ভেতরে সম্পূর্ণ থাকবে */
     object-fit: contain; 
-    transform: translate(-50%, -50%);
+    border-radius: 0; /* প্রোফাইল ফটোর মতো গোলাকার করার প্রয়োজন নেই */
+    /* ছবিটিকে কন্টেইনারের মাঝখানে রাখতে */
+    transform: translate(-50%, -50%) scale(1);
     top: 50%;
     left: 50%;
-    width: auto;
-    height: auto;
-    max-width: 130%; /* বডির বাইরে যেন যেতে পারে */
-    max-height: 130%;
+    width: auto; /* কন্টেইনারের সম্পূর্ণ উইডথ ব্যবহার না করে contain কে কাজ করতে দিন */
+    height: auto; /* contain কে কাজ করতে দিন */
+    max-width: 100%; /* কন্টেইনারের বাইরে যাবে না */
+    max-height: 100%; /* কন্টেইনারের বাইরে যাবে না */
   }
 
   .active .profile-photo { opacity: 0; }
+  
+  /* active স্টেটে পাখির ফটো visible করা */
   .active .bird-photo { 
     opacity: 1; 
     z-index: 6; 
+    /* scaling বা positioning এর কারণে যদি কেটে যায়, তবে এখান থেকে অ্যাডজাস্ট করা যাবে */
+    transform: translate(-50%, -50%) scale(1);
   }
 
-  /* অ্যানিমেশন সার্কেল */
+  /* ছবির চারপাশের সার্কেল অ্যানিমেশন */
   .img-box::before, .img-box::after {
     content: "";
     position: absolute;
@@ -151,25 +164,26 @@
 
   .active .img-box::before, .active .img-box::after { opacity: 0; }
 
-  /* টেক্সট ও আইকন */
+  /* TEXT & CONTENT */
   .text-content {
     transition: 0.8s;
     transform-style: preserve-3d;
   }
 
-  .active .text-content { transform: translateZ(50px); }
+  .active .text-content { transform: translateZ(40px); }
 
   h3 { color: #00ffff; margin-top: 10px; font-size: 24px; }
   p { color: #94a3b8; font-size: 15px; margin: 10px 0; }
   .bio { color: #64748b; font-size: 12px; line-height: 1.5; padding: 0 10px; }
 
+  /* ICONS */
   .icons {
     margin-top: 25px;
     transition: 0.8s;
     transform-style: preserve-3d;
   }
 
-  .active .icons { transform: translateZ(40px) translateY(10px); }
+  .active .icons { transform: translateZ(30px) translateY(10px); }
 
   .icons a {
     text-decoration: none;
@@ -190,6 +204,7 @@
     box-shadow: 0 0 15px #00ffff;
   }
 
+  /* কি-ফ্রেম অ্যানিমেশন */
   @keyframes rotateCard { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
   @keyframes spin1 { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
   @keyframes spin2 { from { transform: translate(-50%, -50%) rotate(360deg); } to { transform: translate(-50%, -50%) rotate(0deg); } }
@@ -204,7 +219,7 @@
 
       <div class="img-box">
         <img src="https://i.ibb.co/svHHtGfg/1001087129.jpg" class="profile-photo" alt="profile photo">
-        <img src="https://i.ibb.co/7d23nww6/1001238372.png" class="bird-photo" alt="spiderman photo">
+        <img src="https://i.ibb.co/7d23nww6/1001238372.png" class="bird-photo" alt="bird photo">
       </div>
 
       <div class="text-content">
@@ -222,107 +237,6 @@
       </div>
 
     </div>
-  </div>
-</div>
-
-</body>
-</html>
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: calc(100% + 7px);
-  height: calc(100% + 7px);
-  border-radius: 50%;
-  background: conic-gradient(
-    transparent 180deg,
-    #00ffcc 240deg,
-    #ffcc00 280deg,
-    #ff00cc 320deg,
-    transparent 360deg
-  );
-  transform: translate(-50%, -50%);
-  animation: spin2 3s linear infinite;
-  z-index: 1;
-}
-
-/* ANIMATION */
-@keyframes spin1 {
-  from { transform: translate(-50%, -50%) rotate(0deg); }
-  to { transform: translate(-50%, -50%) rotate(360deg); }
-}
-
-@keyframes spin2 {
-  from { transform: translate(-50%, -50%) rotate(360deg); }
-  to { transform: translate(-50%, -50%) rotate(0deg); }
-}
-
-@keyframes rotate {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-/* TEXT */
-h3 {
-  color: #00ffff;
-  margin-top: 10px;
-}
-
-p {
-  color: #94a3b8;
-  font-size: 14px;
-}
-
-  p1 {
-  color: #94a3b8;
-  font-size: 11px;
-  }
-
-  
-/* ICONS */
-.icons {
-  margin-top: 20px;
-}
-
-.icons a {
-  text-decoration: none;
-  width: 50px;
-  height: 50px;
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 50%;
-  border: 2px solid #00ffff;
-  color: #00ffff;
-  margin: 0 8px;
-  transition: 0.3s;
-}
-
-.icons a:hover {
-  background: #00ffff;
-  color: #000;
-}
-</style>
-</head>
-
-<body>
-
-<div class="card-wrapper">
-  <div class="card">
-
-    <div class="img-box">
-      <img src="https://i.ibb.co/svHHtGfg/1001087129.jpg">
-    </div>
-
-    <h3>Jewel Rana</h3>
-    <p>Android & Web Developer</p>
-    <p1>Hello, this is Jewel Rana, the developer of this app. I’m excited to inform you that the app will provide the contact numbers of all members working in RRF Rajshahi. I hope you find the app useful. Thank you all!</p1>
-
-    <div class="icons">
-      <a href="tel:01723580852"><i class="fas fa-phone"></i></a>
-      <a href="mailto:jewel.raj.bp@gmail.com"><i class="fas fa-envelope"></i></a>
-      <a href="https://facebook.com/me.jnrana"><i class="fab fa-facebook-f"></i></a>
-    </div>
-
   </div>
 </div>
 
